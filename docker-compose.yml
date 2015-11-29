@@ -8,7 +8,7 @@ nginx:
     extends:
         file: common.yml
         service: common
-    build: nginx/
+    build: ../dockerfiles/nginx/
 
 php53:
     cpu_shares: 512
@@ -19,7 +19,7 @@ php53:
     extends:
         file: common.yml
         service: common
-    build: php53/
+    build: ../dockerfiles/php53/
 
 memcached:
     cpu_shares: 256
@@ -38,7 +38,7 @@ php5:
     extends:
         file: common.yml
         service: common
-    build: php5/
+    build: ../dockerfiles/php5/
     #command: ping google.com
 
 
@@ -52,7 +52,7 @@ smtp:
         - 127.0.0.1:25:25
     volumes:
         - ../exim:/var/spool/exim4
-    build: smtp/
+    build: ../dockerfiles/smtp/
     
 psql:
     cpu_shares: 1024
@@ -63,7 +63,7 @@ psql:
     extends:
         file: common.yml
         service: common
-    build: postgres/ 
+    build: ../dockerfiles/postgres/ 
   
 mysql:
     cpu_shares: 1024
@@ -87,7 +87,7 @@ cron:
     extends:
         file: common.yml
         service: common
-    build: cron/
+    build: ../dockerfiles/cron/
     
 
 #cn="backend"

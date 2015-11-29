@@ -11,7 +11,7 @@ fs:
     extends:
         file: common.yml
         service: common
-    build: fs/ 
+    build: ../dockerfiles/fs/ 
 
 ftp:
     net: "host"
@@ -21,7 +21,7 @@ ftp:
     extends:
         file: common.yml
         service: common   
-    build: proftpd/
+    build: ../dockerfiles/proftpd/
 
 simplehelp:
     net: "host"
@@ -33,7 +33,7 @@ simplehelp:
     #    - 139.162.199.192:443:4430
     volumes:
         - ../simplehelp:/home/simplehelp
-    build: simplehelp/
+    build: ../dockerfiles/simplehelp/
 
 logger:
     volumes:
