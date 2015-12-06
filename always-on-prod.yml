@@ -1,9 +1,9 @@
 ## this file is for service that are always on and independant from  the web services 
 fs:  
     volumes:
-        - ../../vipconsult/freeswitch/master/conf:/usr/local/freeswitch/conf
-        - ../../vipconsult/freeswitch/master/sounds:/usr/local/freeswitch/sounds
-        - ../../vipconsult/freeswitch/master/ssl:/usr/local/freeswitch/ssl
+        - ../freeswitch/master/conf:/usr/local/freeswitch/conf
+        - ../freeswitch/master/sounds:/usr/local/freeswitch/sounds
+        - ../freeswitch/master/ssl:/usr/local/freeswitch/ssl
     extends:
         file: always-on.yml
         service: fs

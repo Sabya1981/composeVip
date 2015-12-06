@@ -4,22 +4,22 @@ nginx:
         - "139.162.199.192:80:80"
         - "139.162.199.192:443:443"
     volumes:
-        - ../../vipconsult/http:/home/http
+        - ../http:/home/http
     extends:
         file: common.yml
         service: common
-    build: ../../docker/vipconsult/nginx/
+    build: ../docker/nginx/
 
 php53:
     cpu_shares: 512
     volumes:
-        - ../../vipconsult/http:/home/http
+        - ../http:/home/http
         # saves the sessions there so that when the container is restarted the sessions are not deleted
         - /tmp:/tmp
     extends:
         file: common.yml
         service: common
-    build: ../../docker/vipconsult/php53/
+    build: ../docker/php53/
 
 memcached:
     cpu_shares: 256
@@ -31,17 +31,14 @@ memcached:
 php5:
     cpu_shares: 512
     volumes:
-        - ../../vipconsult/http:/home/http
+        - ../http:/home/http
         # saves the sessions there so that when the container is restarted the sessions are not deleted
         - /tmp:/tmp
         #- ../docker/php/start.sh:/var/www/html/start.sh
     extends:
         file: common.yml
         service: common
-    build: ../../docker/vipconsult/php5/
-    #command: ping google.com
-
-
+    build: ../docker/php5/
     
 smtp:
     extends:
@@ -51,19 +48,19 @@ smtp:
     ports:
         - 127.0.0.1:25:25
     volumes:
-        - ../../vipconsult/exim:/var/spool/exim4
-    build: ../../docker/vipconsult/smtp/
+        - ../exim:/var/spool/exim4
+    build: ../docker/smtp/
     
 psql:
     cpu_shares: 1024
     ports:
         - 127.0.0.1:5432:5432
     volumes:
-        - ../../vipconsult/postgresql:/var/lib/postgresql/data
+        - ../postgresql:/var/lib/postgresql/data
     extends:
         file: common.yml
         service: common
-    build: ../../docker/vipconsult/postgres/ 
+    build: ../docker/postgres/ 
   
 mysql:
     cpu_shares: 1024
@@ -71,7 +68,7 @@ mysql:
     ports:
         - 127.0.0.1:3306:3306
     volumes:
-        - ../../vipconsult/mysql:/var/lib/mysql
+        - ../mysql:/var/lib/mysql
     extends:
         file: common.yml
         service: common
@@ -87,7 +84,7 @@ cron:
     extends:
         file: common.yml
         service: common
-    build: ../../docker/vipconsult/cron/
+    build: ../docker/cron/
     
 
 #cn="backend"

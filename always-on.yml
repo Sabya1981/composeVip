@@ -11,17 +11,17 @@ fs:
     extends:
         file: common.yml
         service: common
-    build: ../../docker/vipconsult/fs/ 
+    build: ../docker/fs/ 
 
 ftp:
     net: "host"
     volumes:
         - ../../:/home
-        - ../../vipconsult/proftpd/ftpd.passwd:/etc/proftpd/ftpd.passwd
+        - ../proftpd/ftpd.passwd:/etc/proftpd/ftpd.passwd
     extends:
         file: common.yml
         service: common   
-    build: ../../docker/vipconsult/proftpd/
+    build: ../docker/proftpd/
 
 simplehelp:
     net: "host"
@@ -32,8 +32,8 @@ simplehelp:
     #    - 139.162.199.192:80:800
     #    - 139.162.199.192:443:4430
     volumes:
-        - ../../vipconsult/simplehelp:/home/simplehelp
-    build: ../../docker/vipconsult/simplehelp/
+        - ../simplehelp:/home/simplehelp
+    build: ../docker/simplehelp/
 
 logger:
     volumes:
