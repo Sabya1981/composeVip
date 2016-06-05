@@ -1,0 +1,55 @@
+version: '2'
+services:
+## this file is for service that are always on and independant from  the web services 
+    fs:  
+        cpu_shares: 256
+        privileged: true
+        network_mode: "host"
+        volumes:
+           - ../freeswitch/fs_new_layout/:/usr/local/freeswitch/conf
+           - ../freeswitch/fs_new_layout/fs_cli.conf:/etc/fs_cli.conf
+           - ../freeswitch/fs_new_layout/storage:/usr/local/freeswitch/storage
+        extends:
+            file: common.yml
+            service: common
+        build: ../docker/fs/ 
+        image: vipconsult/freeswitch:1.6
+        entrypoint: 'bash -c '
+        command: '"ping google.com"'
+    psql_fs:
+        cpu_shares: 400
+        ports:
+            - 127.0.0.1:5433:5432
+        volumes:
+            - ../postgresqlFs:/var/lib/postgresql/data
+        extends:
+            file: common.yml
+            service: common
+        build: ../docker/postgres/ 
+
+    ftp:
+        network_mode: "host"
+        volumes:
+            - ../../:/home
+            - ../proftpd/ftpd.passwd:/etc/proftpd/ftpd.passwd
+        extends:
+            file: common.yml
+            service: common   
+        build: ../docker/proftpd/
+
+    simplehelp:
+        network_mode: "host"
+        extends:
+            file: common.yml
+            service: common
+        volumes:
+            - ../simplehelp:/home/simplehelp
+        build: ../docker/simplehelp/
+
+    logger:
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        extends:
+            file: common.yml
+            service: common
+        image: sematext/spm-agent-docker

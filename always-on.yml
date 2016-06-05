@@ -1,44 +1,52 @@
+version: '2'
+services:
 ## this file is for service that are always on and independant from  the web services 
-fs:  
-    cpu_shares: 256
-    privileged: true
-    net: host
-    #volumes:
-    #    - ../freeswitch/master:/usr/local/freeswitch/conf
-    #    - ../freeswitch/master/fs_cli.conf:/etc/fs_cli.conf
-    #    - ../freeswitch/master/odbc.ini:/etc/odbc.ini
-    #    - ../freeswitch/master/storage:/usr/local/freeswitch/storage
-    extends:
-        file: common.yml
-        service: common
-    build: ../docker/fs/ 
+    fs:  
+        volumes:
+            - /home/vipconsult/freeswitch/master/conf:/usr/local/freeswitch/conf
+            - /home/vipconsult/freeswitch/master/sounds:/usr/local/freeswitch/sounds
+            - /home/vipconsult/freeswitch/master/ssl:/usr/local/freeswitch/ssl
+        extends:
+            file: always-on-dev.yml
+            service: fs
+        env_file:
+            - env-prod
+        image: vipconsult/freeswitch:1.4
+    psql_fs:
+        volumes:
+            - /home/vipconsult/postgresql:/var/lib/postgresql/data
+        env_file:
+            - env-prod
+        extends:
+            file: always-on-dev.yml
+            service: psql_fs
+    ftp:
+        extends:
+            file: always-on-dev.yml
+            service: ftp
+        volumes:
+            - /home:/home
+            - /home/vipconsult/proftpd/ftpd.passwd:/etc/proftpd/ftpd.passwd
+        env_file:
+            - env-prod
+        image: vipconsult/proftpd
 
-ftp:
-    net: "host"
-    volumes:
-        - ../../:/home
-        - ../proftpd/ftpd.passwd:/etc/proftpd/ftpd.passwd
-    extends:
-        file: common.yml
-        service: common   
-    build: ../docker/proftpd/
+    logger:
+        extends:
+            file: always-on-dev.yml
+            service: logger
+        env_file:
+            - env-prod
 
-simplehelp:
-    net: "host"
-    extends:
-        file: common.yml
-        service: common
-    #ports: 
-    #    - 139.162.199.192:80:800
-    #    - 139.162.199.192:443:4430
-    volumes:
-        - ../simplehelp:/home/simplehelp
-    build: ../docker/simplehelp/
 
-logger:
-    volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro
-    extends:
-        file: common.yml
-        service: common
-    image: sematext/spm-agent-docker
+    simplehelp:
+        extends:
+            file: always-on-dev.yml
+            service: simplehelp
+        volumes:
+            - /home/vipconsult/simplehelp/configuration:/home/SimpleHelp/configuration
+        env_file:
+            - env-prod
+        build: ../docker/simplehelp/
+        # entrypoint: "/bin/bash"
+        # command: "-c 'ping google.com'"
