@@ -2,16 +2,13 @@ version: '2'
 services:
     common:
         # domainname: vip-consult.co.uk
-        # hostname: dev
+        # hostname: prod
         restart: always
-        #volumes:
-            #- /etc/localtime:/etc/localtime:ro
-            #- /etc/timezone:/etc/timezone:ro
-            #- ../../../.bashrc:/root/.bashrc
-            #- ../../../.bash_profile:/root/.bashrc
-            #- ../../../.bash_history:/root/.bash_history
+        volumes:
+            - /home/team/.bash_history:/root/.bash_history
         env_file:
-            - env 
+            - env
+
         logging:
             driver: "json-file"
             options:

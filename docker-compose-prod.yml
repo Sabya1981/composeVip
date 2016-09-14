@@ -1,0 +1,44 @@
+version: '2'
+services:
+    nginx:
+        ports:
+            - "139.162.199.192:80:80"
+            - "139.162.199.192:443:443"
+    fs:  
+        image: vipconsult/freeswitch:1.4 
+        network_mode: "host"
+        volumes:
+            - /home/vipconsult/freeswitch/master/conf:/usr/local/freeswitch/conf
+            - /home/vipconsult/freeswitch/master/sounds:/usr/local/freeswitch/sounds
+            - /home/vipconsult/freeswitch/master/ssl:/usr/local/freeswitch/ssl
+    ftp:
+        cpu_shares: 100
+        build: ../docker/proftpd/ 
+        network_mode: "host"
+        volumes:
+            - /home:/home
+            - /home/vipconsult/proftpd/ftpd.passwd:/etc/proftpd/ftpd.passwd
+        extends:
+             file: common.yml
+             service: common
+
+    logger:
+        cpu_shares: 100
+        image: sematext/sematext-agent-docker
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        extends:
+             file: common.yml
+             service: common
+
+    simplehelp:
+        cpu_shares: 256
+        build: ../docker/simplehelp/
+        network_mode: "host"
+        volumes:
+            - /home/vipconsult/simplehelp/configuration:/home/SimpleHelp/configuration
+        extends:
+             file: common.yml
+             service: common
+        # entrypoint: "/bin/bash"
+        # command: "-c 'ping google.com'"

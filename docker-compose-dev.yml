@@ -1,126 +1,88 @@
 version: '2'
 services:
     nginx:
-        cpu_shares: 512
         ports:
             - 80:80
+            - 443:443
         volumes:
             - ../http:/home/http
-            - /tmp/ngx_pagespeed_cache:/var/ngx_pagespeed_cache
+            - ../http/ngx_pagespeed_cache:/var/ngx_pagespeed_cache
         extends:
-            file: common.yml
-            service: common
-        build: ../docker/nginx/
-        #command: ping google.com
+             file: common-dev.yml
+             service: common
 
     php53:
-        cpu_shares: 512
         volumes:
             - ../http:/home/http
             # saves the sessions there so that when the container is restarted the sessions are not deleted
             - /tmp:/tmp
         extends:
-             file: common.yml
-             service: common
-        build: ../docker/php53/
-        #command: ping google.com
-
-
-    memcached:
-        cpu_shares: 256
-        extends:
-            file: common.yml
+            file: common-dev.yml
             service: common
-        image: memcached:1.4.24    
-
     php5:
-        cpu_shares: 512
         volumes:
             - ../http:/home/http
             # saves the sessions there so that when the container is restarted the sessions are not deleted
             - /tmp:/tmp
         extends:
-            file: common.yml
-            service: common
-        build: ../docker/php5/
-
+             file: common-dev.yml
+             service: common
+        environment:
+            - PHP53_display_errors=on
+            - PHP5_display_errors=on
     smtp:
-        cpu_shares: 256
-        extends:
-            file: common.yml
-            service: common
-        # so that when we restart the container the mailq is preserved
         volumes:
             - ../exim:/var/spool/exim4
-        build: ../docker/smtp/
-        # command: ping 127.0.0.1
-        # security_opt:
-        #     - seccomp:unconfined
+        extends:
+             file: common-dev.yml
+             service: common
 
     psql:
-        cpu_shares: 800
-        ports:
-            - 127.0.0.1:5432:5432
         volumes:
             - ../postgresql:/var/lib/postgresql/data
         extends:
-            file: common.yml
-            service: common
-        build: ../docker/postgres/ 
-
+             file: common-dev.yml
+             service: common
     mysql:
-        cpu_shares: 800
         # so that we can connect shrough ssh
-        ports:
-            - 127.0.0.1:3306:3306
         volumes:
             - ../mysql:/var/lib/mysql
         extends:
-            file: common.yml
-            service: common
-        image: mysql:5.6   
-        #command: ping google.com
-
+             file: common-dev.yml
+             service: common
     cron:  
-        cpu_shares: 256
-        volumes:
-            - /usr/local/bin/docker:/usr/bin/docker:ro
-            - /var/run/docker.sock:/var/run/docker.sock:ro
         extends:
-            file: common.yml
+             file: common-dev.yml
+             service: common
+    memcached:  
+        extends:
+             file: common-dev.yml
+             service: common
+    fs:  
+        build: ../docker/fs/
+        ports:
+            - 444:443
+            - 19000-19100:19000-19100
+            - 3478:3478
+            - 3479:3479
+            - 5003:5003
+            - 5066:5066
+            - 7443:7443
+        volumes:
+            - ../freeswitch/fs_new_layout/:/usr/local/freeswitch/conf
+            - ../freeswitch/fs_new_layout/fs_cli.conf:/etc/fs_cli.conf
+            - ../freeswitch/fs_new_layout/storage:/usr/local/freeswitch/storage
+        extends:
+            file: common-dev.yml
             service: common
-        build: ../docker/cron/
-
-    #cn="backend"
-    #if [ "$1" == "" ] || [ $1 == $cn ] ;then
-    #echo "Starting $cn"
-    #	docker run -it --rm --name $cn \
-    #		--log-driver=syslog \
-    #	        --log-opt syslog-tag=$cn \
-    #		--link psql1:psql1 \
-    #		-P \
-    #		-v $(which docker):/docker \
-    #		-e "smtpServer=smtp" \
-    #		-e "portalIP=192.168.168.168" \
-    #		--link smtp:smtp \
-    #		-v /var/run/docker.sock:/docker.sock \
-    #		-v /home/golang/src/github.com/vipconsult/portalBackend:/go/src/portalBackend  \
-    #		b
-    #fi
-
-
-    #cn="samba"
-    #if [ "$1" == "" ] || [ $1 == $cn ] ;then
-    #echo "Starting $cn"
-    #        docker run --restart=always -d --name $cn \
-    #		--log-driver=syslog \
-    #                --log-opt syslog-tag=$cn \
-    #		-v /etc/localtime:/etc/localtime:ro \
-    #                -v /etc/timezone:/etc/timezone:ro \
-    #		-p 139:139 -p 445:445  \
-    #		-v /home:/home \
-    #		dreamcat4/samba \
-    #		-s "home;/home" \
-    #		-s "home;/home;yes;no;no;http" \
-    #		-u "http;1202;1001;www-data"
-    #fi
+        # image: vipconsult/freeswitch:1.6
+        # entrypoint: 'bash -c '
+        # command: '"ping google.com"'
+    # psql_fs:
+    #     ports:
+    #         - 5433:5432
+    #     volumes:
+    #         - ../postgresqlFs:/var/lib/postgresql/data
+    #     extends:
+    #         file: common-dev.yml
+    #         service: common

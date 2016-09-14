@@ -1,0 +1,11 @@
+version: '2'
+services:
+    common:
+        domainname: vip-consult.co.uk
+        hostname: dev
+        env_file:
+            - env
+            - env-dev
+        volumes:
+            - ~/.bash_history:/root/.bash_history
+       
