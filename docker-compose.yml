@@ -115,7 +115,6 @@ services:
         extends:
              file: common.yml
              service: common
-
     cron:
         cpu_shares: 100
         build: ../docker/cron/
@@ -125,8 +124,9 @@ services:
              file: common.yml
              service: common
         environment:
+            - DOCKER_API_VERSION=1.23
             - CRON_EMAIL=support@vip-consult.co.uk
-            - CRONTASK_1=0 1 * * *  root docker exec compose_php5_1 php /home/http/vip-consult.co.uk/seo/public/cron.php
+            # - CRONTASK_1=0 1 * * *  root docker exec compose_php5_1 php /home/http/vip-consult.co.uk/seo/public/cron.php
             #split the smtp log
             - CRONTASK_2=0 12 * * * root docker exec compose_smtp_1 bash -c "exicyclog && chmod -R 777 /var/log/exim4/"
             - CRONTASK_3=0 5 * * * root docker exec compose_php5_1 php /home/http/vip-consult.co.uk/portal/public/index.php cron index
