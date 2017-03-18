@@ -42,3 +42,12 @@ services:
              service: common
         # entrypoint: "/bin/bash"
         # command: "-c 'ping google.com'"
+    simplehelp-new:
+        cpu_shares: 256
+        build: ../docker/simplehelp/
+        network_mode: "host"
+        volumes:
+            - /home/vipconsult/simplehelpNew/configuration:/home/SimpleHelp/configuration
+        extends:
+             file: common.yml
+             service: common

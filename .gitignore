@@ -1,2 +1,8 @@
 env*
+exim
 .DS_Store
+freeswitch
+http
+java
+mysql
+postgresql

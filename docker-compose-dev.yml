@@ -50,16 +50,16 @@ services:
         extends:
              file: common-dev.yml
              service: common
-    cron:  
+    cron:
         extends:
              file: common-dev.yml
              service: common
-    memcached:  
+    memcached:
         extends:
              file: common-dev.yml
              service: common
-    fs:  
-        build: ../docker/fs/
+    fs:
+        build: ../dockerfiles/fs/
         ports:
             - 444:443
             - 19000-19100:19000-19100

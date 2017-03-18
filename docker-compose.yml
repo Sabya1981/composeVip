@@ -4,7 +4,7 @@ services:
         cpu_shares: 256
         #doesn't build anymore
         # build: ../docker/php5/
-        image: vipconsult/php:5.3        
+        image: vipconsult/php:5.3
         volumes:
             - /home/vipconsult/http:/home/http
         extends:
@@ -34,7 +34,7 @@ services:
         - PHP53_process_idle_timeout=60
     php5:
         cpu_shares: 256
-        build: ../docker/php5/
+        build: ../dockerfiles/php5/
         volumes:
             - /home/vipconsult/http:/home/http
         extends:
@@ -64,7 +64,7 @@ services:
         - PHP5_process_idle_timeout=60
     nginx:
         cpu_shares: 256
-        build: ../docker/nginx/
+        build: ../dockerfiles/nginx/
         volumes:
             - /home/vipconsult/http:/home/http
         extends:
@@ -74,14 +74,14 @@ services:
         # command: -c "ping google.com"
     memcached:
         cpu_shares: 100
-        image: memcached:1.4.24    
+        image: memcached:1.4.24
         extends:
              file: common.yml
              service: common
 
     smtp:
         cpu_shares: 100
-        build: ../docker/smtp/
+        build: ../dockerfiles/smtp/
         volumes:
             - /home/vipconsult/exim:/var/spool/exim4
         extends:
@@ -96,9 +96,9 @@ services:
 
     mysql:
         cpu_shares: 512
-        image: mysql:5.6 
+        image: mysql:5.6
         ports:
-            - 127.0.0.1:3306:3306        
+            - 127.0.0.1:3306:3306
         volumes:
             - /home/vipconsult/mysql:/var/lib/mysql
         extends:
@@ -107,7 +107,7 @@ services:
 
     psql:
         cpu_shares: 512
-        build: ../docker/postgres/
+        build: ../dockerfiles/postgres/
         ports:
             - 127.0.0.1:5432:5432
         volumes:
@@ -117,30 +117,29 @@ services:
              service: common
     cron:
         cpu_shares: 100
-        build: ../docker/cron/
-        volumes:  
+        build: ../dockerfiles/cron/
+        volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         extends:
              file: common.yml
              service: common
         environment:
             - DOCKER_API_VERSION=1.23
-            - CRON_EMAIL=support@vip-consult.co.uk
+            - MAILTO=support@vip-consult.co.uk
             # - CRONTASK_1=0 1 * * *  root docker exec compose_php5_1 php /home/http/vip-consult.co.uk/seo/public/cron.php
             #split the smtp log
-            - CRONTASK_2=0 12 * * * root docker exec compose_smtp_1 bash -c "exicyclog && chmod -R 777 /var/log/exim4/"
+            - CRONTASK_2=0 * * * * root docker exec compose_smtp_1 bash -c "exicyclog && chmod -R 777 /var/log/exim4/"
             - CRONTASK_3=0 5 * * * root docker exec compose_php5_1 php /home/http/vip-consult.co.uk/portal/public/index.php cron index
-    fs:  
+    fs:
         cpu_shares: 800
         extends:
              file: common.yml
              service: common
     # psql_fs:
     #     cpu_shares: 256
-    #     build: ../docker/postgres/ 
+    #     build: ../docker/postgres/
     #     volumes:
     #         - /home/vipconsult/postgresql:/var/lib/postgresql/data
     #     extends:
     #          file: common.yml
     #          service: common
-    
